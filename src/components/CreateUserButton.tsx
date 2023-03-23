@@ -1,22 +1,32 @@
 import { useGumApp } from '@/contexts/GumAppProviderContext';
 import { useCreateUser } from '@gumhq/react-sdk';
 import { useWallet } from '@solana/wallet-adapter-react';
+import styles from '@/styles/components/GumUserCreateButton.module.css';
 
 export function GumUserCreateButton(): JSX.Element {
   const { sdk } = useGumApp();
   const { publicKey } = useWallet();
   const { create, isCreatingUser, createUserError } = useCreateUser(sdk);
 
-  const handleClick = () => {
+  const handleClick = async () => {
     if (publicKey) {
-      create(publicKey);
+      await create(publicKey);
     }
   };
-
+  
   return (
     <>
       {sdk && (
-        <button onClick={handleClick}>Create User</button>
+        <button
+          className={`${styles.button} ${isCreatingUser ? styles.disabled : ''}`}
+          onClick={handleClick}
+          disabled={isCreatingUser}
+        >
+          {isCreatingUser ? 'Creating User...' : 'Create User'}
+        </button>
+      )}
+      {createUserError && (
+        <p className={styles.error}>{createUserError.message}</p>
       )}
     </>
   );

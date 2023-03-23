@@ -1,26 +1,18 @@
 import Head from 'next/head'
 import Image from 'next/image'
 import styles from '@/styles/Home.module.css'
-import { useConnection } from '@solana/wallet-adapter-react'
-import { useGumSDK } from '@/hooks/useGumSDK'
-import { WalletAdapterNetwork } from '@solana/wallet-adapter-base'
 import { SocialFeed } from '@/components/SocialFeed'
 import dynamic from 'next/dynamic'
 import { MyProfile } from '@/components/MyProfile'
+import { withGumSDK } from '@/components/withGumSDK';
+import { GumUserCreateButton } from '@/components/CreateUserButton'
 
 const WalletMultiButtonDynamic = dynamic(
     async () => (await import('@solana/wallet-adapter-react-ui')).WalletMultiButton,
     { ssr: false }
 );
 
-export default function Home() {
-  const network = WalletAdapterNetwork.Devnet;
-  const { connection } = useConnection();
-  const sdk = useGumSDK(connection, {preflightCommitment: 'confirmed'}, network, "https://light-pelican-32.hasura.app/v1/graphql");
-
-  if (!sdk) {
-    return null;
-  }
+function Home() {
   
   return (
     <>
@@ -39,11 +31,15 @@ export default function Home() {
       <main className={styles.main}>
         <div className={styles.profileContainer}>
           {/* My Profile */}
-          <MyProfile sdk={sdk} />
+          <MyProfile />
         </div>
         {/* Add a social Feed */}
-        <SocialFeed sdk={sdk} />
+        <SocialFeed />
+        {/* Create user button */}
+        <GumUserCreateButton />
       </main>
       </>
   )
 }
+
+export default withGumSDK(Home);

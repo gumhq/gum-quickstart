@@ -1,3 +1,4 @@
+import { useGumApp } from '@/contexts/GumAppProviderContext';
 import { SDK, useProfile } from '@gumhq/react-sdk';
 import { Profile } from '@gumhq/ui-components';
 import { PublicKey } from '@solana/web3.js';
@@ -6,7 +7,8 @@ interface Props {
   sdk: SDK;
 }
 
-export function MyProfile({sdk}: Props) {
+export function MyProfile() {
+  const { sdk } = useGumApp();
   const { profile } = useProfile(sdk, new PublicKey("koESe1SzjdCtV25tDr4g58cjCVWKE3vBE1h8LobivY5"));
   
   const profileData = {
