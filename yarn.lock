@@ -127,26 +127,15 @@
   resolved "https://registry.yarnpkg.com/@graphql-typed-document-node/core/-/core-3.1.2.tgz#6fc464307cbe3c8ca5064549b806360d84457b04"
   integrity sha512-9anpBMM9mEgZN4wr2v8wHJI2/u5TnnggewRN6OlvXTTnuVyoY19X6rOv9XTqKRw6dcGKwZsBi8n0kDE2I5i4VA==
 
-"@gumhq/react-sdk@^1.0.12":
-  version "1.0.12"
-  resolved "https://registry.yarnpkg.com/@gumhq/react-sdk/-/react-sdk-1.0.12.tgz#620e79841be60273efc72f0b7aaebb03f2f2b1f7"
-  integrity sha512-lNqK9B5zsatrtbb61aHZzYoqu4DGh4unmUyAEtD3D0SGJQEUFcFbBNpEs/rneINCbK3/EN0DmRLr6VZgQ0tyCA==
+"@gumhq/react-sdk@^2.0.1":
+  version "2.0.1"
+  resolved "https://registry.yarnpkg.com/@gumhq/react-sdk/-/react-sdk-2.0.1.tgz#31ee11e3eb25279e73cde8d630d9b6ca5a2f6e72"
+  integrity sha512-tPRMjMIVwcxNvekLUl1ZIRRFy1dhSHhF7ht36jAvYrvw4ctaGtxu0P3IEnKL/GgjH0le3A4HGD1wbMbEyltZAw==
   dependencies:
-    "@gumhq/sdk" "^1.0.14"
+    "@gumhq/sdk" "^2.0.1"
     "@solana/wallet-adapter-react" "^0.15.26"
-    "@types/node" "^16.18.12"
+    crypto-js "^4.1.1"
     typescript "^4.9.5"
-
-"@gumhq/sdk@^1.0.14":
-  version "1.0.14"
-  resolved "https://registry.yarnpkg.com/@gumhq/sdk/-/sdk-1.0.14.tgz#a30c8b7b089d2e6f5adbaae900ee74ebf38aefcc"
-  integrity sha512-+6ISxS57jqggMnsMKdHXIviTAfEm2l4yXN5keA0ZJoHihu++Uo8lpAizVwH9rF+AtiN7/eq4qvyQxIsd0bml5g==
-  dependencies:
-    "@project-serum/anchor" "^0.26.0"
-    axios "^1.2.6"
-    graphql "^16.6.0"
-    graphql-request "^5.1.0"
-    randombytes "^2.1.0"
 
 "@gumhq/sdk@^1.0.3":
   version "1.0.11"
@@ -158,6 +147,18 @@
     graphql "^16.6.0"
     graphql-request "^5.1.0"
     randombytes "^2.1.0"
+
+"@gumhq/sdk@^2.0.1":
+  version "2.0.1"
+  resolved "https://registry.yarnpkg.com/@gumhq/sdk/-/sdk-2.0.1.tgz#eca477aa72370bee9279af412bb694fbc4d7fbd0"
+  integrity sha512-vjKN9IWVN/fKGFFnWIY/C3gtERpCah+OSAwXYXLo2i6ULv32h1LREsEB8wCPql1It4eLbuq9j66s/VcWXDcyrw==
+  dependencies:
+    "@project-serum/anchor" "^0.26.0"
+    axios "^1.2.6"
+    graphql "^16.6.0"
+    graphql-request "^5.1.0"
+    randombytes "^2.1.0"
+    tweetnacl "^1.0.3"
 
 "@gumhq/ui-components@^2.0.4":
   version "2.0.4"
@@ -2221,11 +2222,6 @@
   version "12.20.55"
   resolved "https://registry.yarnpkg.com/@types/node/-/node-12.20.55.tgz#c329cbd434c42164f846b909bd6f85b5537f6240"
   integrity sha512-J8xLz7q2OFulZ2cyGTLE1TbbZcjpno7FaN6zdJNrgAdrJ+DZzh/uFR6YrTb4C+nXakvud8Q4+rbhoIWlYQbUFQ==
-
-"@types/node@^16.18.12":
-  version "16.18.14"
-  resolved "https://registry.yarnpkg.com/@types/node/-/node-16.18.14.tgz#5465ce598486a703caddbefe8603f8a2cffa3461"
-  integrity sha512-wvzClDGQXOCVNU4APPopC2KtMYukaF1MN/W3xAmslx22Z4/IF1/izDMekuyoUlwfnDHYCIZGaj7jMwnJKBTxKw==
 
 "@types/pbkdf2@^3.0.0":
   version "3.1.0"
@@ -6266,6 +6262,11 @@ tsutils@^3.21.0:
   integrity sha512-mHKK3iUXL+3UF6xL5k0PEhKRUBKPBCv/+RkEOpjRWxxx27KKRBmmA60A9pgOUvMi8GKhRMPEmjBRPzs2W7O1OA==
   dependencies:
     tslib "^1.8.1"
+
+tweetnacl@^1.0.3:
+  version "1.0.3"
+  resolved "https://registry.yarnpkg.com/tweetnacl/-/tweetnacl-1.0.3.tgz#ac0af71680458d8a6378d0d0d050ab1407d35596"
+  integrity sha512-6rt+RN7aOi1nGMyC4Xa5DdYiukl2UWCbcJft7YhxReBGQD7OAM8Pbxw6YMo4r2diNEA8FEmu32YOn9rhaiE5yw==
 
 type-check@^0.4.0, type-check@~0.4.0:
   version "0.4.0"
