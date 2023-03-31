@@ -6,6 +6,7 @@ import { WalletAdapterNetwork } from '@solana/wallet-adapter-base'
 import { PhantomWalletAdapter, SolflareWalletAdapter, SolletWalletAdapter, SolletExtensionWalletAdapter, TorusWalletAdapter } from '@solana/wallet-adapter-wallets'
 import { clusterApiUrl } from '@solana/web3.js'
 import { useMemo } from 'react'
+import GumSDKProvider from '@/components/GumSDKProvider'
 
 // Use require instead of import since order matters
 require('@solana/wallet-adapter-react-ui/styles.css');
@@ -26,9 +27,11 @@ export default function App({ Component, pageProps }: AppProps) {
 
   return (
     <WalletContextProvider endpoint={endpoint} network={network} wallets={wallets} >
-      <GumUIProvider>
-        <Component {...pageProps} />
-      </GumUIProvider>
+      <GumSDKProvider> 
+        <GumUIProvider>
+          <Component {...pageProps} />
+        </GumUIProvider>
+      </GumSDKProvider>
     </WalletContextProvider>
   )
 }

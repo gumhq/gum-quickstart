@@ -1,11 +1,10 @@
-import { useFeed } from '@gumhq/react-sdk'
+import { useFeed, useGumContext } from '@gumhq/react-sdk'
 import styles from '@/styles/Home.module.css'
 import { PublicKey } from '@solana/web3.js'
 import { Feed, PostMetadata, ProfileMetadata } from '@gumhq/ui-components';
-import { useGumApp } from '@/contexts/GumAppProviderContext';
 
 export function SocialFeed() {
-  const { sdk } = useGumApp();
+  const { sdk } = useGumContext();
   const { feedData } = useFeed(sdk, new PublicKey("FSc4aAr9n84AYsAVFSs25hxde3v3zW5yTzU9AVmtnvkG"));
 
   const feed = feedData?.map((post: any) => {

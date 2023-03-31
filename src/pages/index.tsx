@@ -4,7 +4,6 @@ import styles from '@/styles/Home.module.css'
 import { SocialFeed } from '@/components/SocialFeed'
 import dynamic from 'next/dynamic'
 import { MyProfile } from '@/components/MyProfile'
-import { withGumSDK } from '@/components/withGumSDK';
 import { GumUserCreateButton } from '@/components/CreateUserButton'
 
 const WalletMultiButtonDynamic = dynamic(
@@ -13,7 +12,6 @@ const WalletMultiButtonDynamic = dynamic(
 );
 
 function Home() {
-  
   return (
     <>
       <Head>
@@ -42,4 +40,4 @@ function Home() {
   )
 }
 
-export default withGumSDK(Home);
+export default Home;

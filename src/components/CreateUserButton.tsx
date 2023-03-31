@@ -1,10 +1,9 @@
-import { useGumApp } from '@/contexts/GumAppProviderContext';
-import { useCreateUser } from '@gumhq/react-sdk';
+import { useCreateUser, useGumContext } from '@gumhq/react-sdk';
 import { useWallet } from '@solana/wallet-adapter-react';
 import styles from '@/styles/components/GumUserCreateButton.module.css';
 
 export function GumUserCreateButton(): JSX.Element {
-  const { sdk } = useGumApp();
+  const { sdk } = useGumContext();
   const { publicKey } = useWallet();
   const { create, isCreatingUser, createUserError } = useCreateUser(sdk);
 
