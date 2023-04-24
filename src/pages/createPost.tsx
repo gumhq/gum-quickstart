@@ -4,7 +4,9 @@ import { GPLCORE_PROGRAMS } from "@gumhq/sdk";
 import { useWallet } from "@solana/wallet-adapter-react";
 import { PublicKey } from "@solana/web3.js";
 import { useEffect, useState } from "react";
-import Post from "./Post";
+import styles from '@/styles/Home.module.css'
+import Post from '@/components/Post';
+import Header from "@/components/Header";
 
 export type Post = {
   content: {
@@ -116,17 +118,22 @@ const CreatePost = () => {
 
   return (
     <>
-    <form onSubmit={handleSubmit}>
-      <input
-        type="text"
-        value={post}
-        onChange={(e) => setPost(e.target.value)}
-        placeholder="What's on your mind?"
-      />
+    <Header />
+    <main className={styles.main}>
+      <div className={styles.container}>
+        <form onSubmit={handleSubmit}>
+          <input
+            type="text"
+            value={post}
+            onChange={(e) => setPost(e.target.value)}
+            placeholder="What's on your mind?"
+          />
 
-      <button type="submit">Submit</button>
-    </form>
-    <Post posts={posts} />
+          <button type="submit">Submit</button>
+        </form>
+      </div>
+      <Post posts={posts} />
+    </main>
     </>
   );
 };
