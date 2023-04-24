@@ -1,4 +1,4 @@
-import { Post } from "@/components/CreatePost";
+import { Post } from "@/pages/createPost";
 import { SDK } from "@gumhq/react-sdk";
 import { PublicKey } from "@solana/web3.js";
 
