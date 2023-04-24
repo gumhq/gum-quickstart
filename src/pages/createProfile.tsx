@@ -62,10 +62,10 @@ function CreateProfile() {
         console.error("error creating profile");
         return false;
       }
-      router.push('/');
+      router.push('/createPost');
     } else {
       alert("You already have a profile, redirecting to home page");
-      router.push('/');
+      router.push('/createPost');
     }
   }
 

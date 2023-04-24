@@ -7,6 +7,7 @@ import { useEffect, useState } from "react";
 import styles from '@/styles/Home.module.css'
 import Post from '@/components/Post';
 import Header from "@/components/Header";
+import { useRouter } from "next/router";
 
 export type Post = {
   content: {
@@ -33,6 +34,7 @@ const CreatePost = () => {
   const [user, setUser] = useState<PublicKey | undefined>(undefined);
   const [profile, setProfile] = useState<PublicKey | undefined>(undefined);
   const [posts, setPosts] = useState<Post[]>([]);
+  const router = useRouter();
 
   useEffect(() => {
     const setUp = async () => {
@@ -43,12 +45,16 @@ const CreatePost = () => {
           const profileAccount = await getProfileAccount(sdk, userAccount);
           if (profileAccount) {
             setProfile(profileAccount);
+          } else {
+            router.push("/createProfile");
           }
+        } else {
+          router.push("/createProfile");
         }
       }
     };
     setUp();
-  }, [sdk, wallet.publicKey]);
+  }, [router, sdk, wallet.publicKey]);
   
   const updateSession = async () => {
     if (!sessionToken) {
