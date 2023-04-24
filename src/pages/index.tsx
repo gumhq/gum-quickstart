@@ -5,6 +5,7 @@ import { SocialFeed } from '@/components/SocialFeed'
 import dynamic from 'next/dynamic'
 import { MyProfile } from '@/components/MyProfile'
 import { GumUserCreateButton } from '@/components/CreateUserButton'
+import CreatePost from '@/components/CreatePost'
 
 const WalletMultiButtonDynamic = dynamic(
     async () => (await import('@solana/wallet-adapter-react-ui')).WalletMultiButton,
@@ -27,14 +28,12 @@ function Home() {
         </div>
       </header>
       <main className={styles.main}>
-        <div className={styles.profileContainer}>
-          {/* My Profile */}
+        {/* <div className={styles.profileContainer}>
           <MyProfile />
         </div>
-        {/* Add a social Feed */}
         <SocialFeed />
-        {/* Create user button */}
-        <GumUserCreateButton />
+        <GumUserCreateButton /> */}
+        <CreatePost />
       </main>
       </>
   )
