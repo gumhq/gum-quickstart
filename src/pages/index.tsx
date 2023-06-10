@@ -12,7 +12,6 @@ function Home() {
         <div className={styles.container}>
           <MyProfile />
         </div>
-        <SocialFeed />
         <GumUserCreateButton />
       </main>
       </>

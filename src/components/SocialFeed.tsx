@@ -2,12 +2,13 @@ import { useFeed, useGumContext } from '@gumhq/react-sdk'
 import styles from '@/styles/Home.module.css'
 import { PublicKey } from '@solana/web3.js'
 import { Feed, PostMetadata, ProfileMetadata } from '@gumhq/ui-components';
+import React from 'react';
 
 export function SocialFeed() {
   const { sdk } = useGumContext();
   const { feedData } = useFeed(sdk, new PublicKey("6FKC12h85MmiZ1WtYamRJE3SpcrgUkSr8maWsLAoKwjQ"));
 
-  const feed = feedData?.map((post: any) => {
+  const feed = React.useMemo(() => feedData?.map((post: any) => {
     const profileData = post.profile_metadata;
     const metadata = post.metadata;
     return {
@@ -17,7 +18,7 @@ export function SocialFeed() {
       } as PostMetadata,
       profile: profileData as ProfileMetadata,
     }
-  });
+  }), [feedData]);
 
   return (
     <div className={styles.feedContainer}>
