@@ -13,7 +13,7 @@ const GumSDKProvider: React.FC<GumSDKProviderProps> = ({ children }) => {
   const { connection } = useConnection();
   const anchorWallet = useAnchorWallet() as AnchorWallet;
   const sdk = useGumSDK();
-  const sessionWallet = useSessionKeyManager(anchorWallet, connection, "mainnet-beta");
+  const sessionWallet = useSessionKeyManager(anchorWallet, connection, "devnet");
 
   if (!sdk) {
     return null;
