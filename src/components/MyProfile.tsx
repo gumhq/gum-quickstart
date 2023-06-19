@@ -6,8 +6,8 @@ import React from 'react';
 
 export function MyProfile() {
   const { sdk } = useGumContext();
-  const { profile } = useProfile(sdk, new PublicKey("HbaeYzrgBnM8gPshvNgd2xH7mV5fpBnAo3Gqwr1xfjD2"));
-  
+  const { profile } = useProfile(sdk, new PublicKey("EN6p8RDx5YdfpzsXwuTS2g8VzVP6m9yBKHsAFK9PkK6X"));
+
   const profileData = React.useMemo(() => {
     return {
       ...profile?.metadata,

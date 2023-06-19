@@ -1,4 +1,4 @@
-import { getProfileAccount, getUserAccount } from "@/utils";
+import { getProfileAccount } from "@/utils";
 import { useCreatePost, useGumContext, useSessionWallet, useUploaderContext } from "@gumhq/react-sdk";
 import { GPLCORE_PROGRAMS } from "@gumhq/sdk";
 import { useWallet } from "@solana/wallet-adapter-react";
@@ -28,26 +28,19 @@ const CreatePost = () => {
   const { sdk } = useGumContext();
   const wallet = useWallet();
   const session = useSessionWallet();
-  const { publicKey, sessionToken, createSession, ownerPublicKey, sendTransaction }  = session;
+  const { publicKey: sessionPublicKey, sessionToken, createSession, sendTransaction }  = session;
   const { handleUpload, uploading, error } = useUploaderContext();
-  const { create, createPostError } = useCreatePost(sdk);
-  const [user, setUser] = useState<PublicKey | undefined>(undefined);
+  const { createUsingSession, createPostError } = useCreatePost(sdk);
   const [profile, setProfile] = useState<PublicKey | undefined>(undefined);
   const [posts, setPosts] = useState<Post[]>([]);
   const router = useRouter();
-
+  console.log(`Error: ${createPostError}`)
   useEffect(() => {
     const setUp = async () => {
       if (wallet.publicKey) {
-        const userAccount = await getUserAccount(sdk, wallet.publicKey);
-        if (userAccount) {
-          setUser(userAccount);
-          const profileAccount = await getProfileAccount(sdk, userAccount);
-          if (profileAccount) {
-            setProfile(profileAccount);
-          } else {
-            router.push("/createProfile");
-          }
+        const profileAccount = await getProfileAccount(sdk, wallet.publicKey);
+        if (profileAccount) {
+          setProfile(profileAccount);
         } else {
           router.push("/createProfile");
         }
@@ -75,9 +68,9 @@ const CreatePost = () => {
       console.log("missing session");
       return;
     }
-    if (!session.sessionToken || !session.publicKey || !session.signMessage || !session.sendTransaction || !profile || !user) {
-      console.log(` profile: ${profile} user: ${user}`);
-      console.log("missing session or profile or user");
+    if (!session.sessionToken || !session.publicKey || !session.signMessage || !session.sendTransaction || !profile) {
+      console.log(` profile: ${profile}`);
+      console.log("missing session or profile");
       return;
     }
 
@@ -97,6 +90,7 @@ const CreatePost = () => {
         publicKey: session.publicKey.toBase58(),
         signature: signatureString,
       },
+      app_id: "gum-quickstart",
       metadataUri: '',
       transactionUrl: '',
     };
@@ -109,7 +103,7 @@ const CreatePost = () => {
     }
 
     // create the post
-    const txRes = await create(uploader.url, profile, user, session.publicKey, new PublicKey(session.sessionToken), session.sendTransaction);
+    const txRes = await createUsingSession(uploader.url, profile, session.publicKey, new PublicKey(session.sessionToken), session.sendTransaction);
     if (!txRes) {
       console.log("error creating post");
       return;
