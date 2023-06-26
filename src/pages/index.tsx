@@ -1,7 +1,7 @@
 import styles from '@/styles/Home.module.css'
 import { SocialFeed } from '@/components/SocialFeed'
 import { MyProfile } from '@/components/MyProfile'
-import { GumDomainCreateButton } from '@/components/CreateDomainButton'
+import { DomainCreationButton } from '@/components/CreateDomainButton'
 import Header from '@/components/Header'
 
 function Home() {
@@ -12,7 +12,7 @@ function Home() {
         <div className={styles.container}>
           <MyProfile />
         </div>
-        <GumDomainCreateButton />
+        <DomainCreationButton />
       </main>
       </>
   )

@@ -1,15 +1,13 @@
 import { getProfileAccount } from "@/utils";
-import { useCreatePost, useGumContext, useSessionWallet, useUploaderContext } from "@gumhq/react-sdk";
-import { GPLCORE_PROGRAMS } from "@gumhq/sdk";
+import { useCreatePost, useGumContext, useSessionWallet, useUploaderContext, GPLCORE_PROGRAMS } from "@gumhq/react-sdk";
 import { useWallet } from "@solana/wallet-adapter-react";
 import { PublicKey } from "@solana/web3.js";
 import { useEffect, useState } from "react";
-import styles from '@/styles/Home.module.css'
-import Post from '@/components/Post';
+import styles from '@/styles/Home.module.css';
+import PostDisplay from '@/components/PostDisplay';
 import Header from "@/components/Header";
-import { useRouter } from "next/router";
 
-export type Post = {
+export type PostData = {
   content: {
     content: string;
     format: string;
@@ -19,75 +17,71 @@ export type Post = {
     signature: string;
     publicKey: string;
   };
+  app_id: string;
   metadataUri: string;
   transactionUrl: string;
 };
 
-const CreatePost = () => {
-  const [post, setPost] = useState("");
+const PostCreator = () => {
+  const [postContent, setPostContent] = useState("");
   const { sdk } = useGumContext();
   const wallet = useWallet();
   const session = useSessionWallet();
+  const cluster = (process.env.NEXT_PUBLIC_SOLANA_NETWORK as "devnet" | "mainnet-beta") || 'devnet';
   const { publicKey: sessionPublicKey, sessionToken, createSession, sendTransaction }  = session;
   const { handleUpload, uploading, error } = useUploaderContext();
   const { createUsingSession, createPostError } = useCreatePost(sdk);
   const [profile, setProfile] = useState<PublicKey | undefined>(undefined);
-  const [posts, setPosts] = useState<Post[]>([]);
-  const router = useRouter();
-  console.log(`Error: ${createPostError}`)
+  const [posts, setPosts] = useState<PostData[]>([]);
+
+  console.log(`Error: ${createPostError}`);
+  
   useEffect(() => {
-    const setUp = async () => {
+    const initializeProfile = async () => {
       if (wallet.publicKey) {
         const profileAccount = await getProfileAccount(sdk, wallet.publicKey);
         if (profileAccount) {
           setProfile(profileAccount);
         } else {
-          router.push("/createProfile");
+          console.log("Profile account not found, please create profile");
         }
       }
     };
-    setUp();
-  }, [router, sdk, wallet.publicKey]);
+    initializeProfile();
+  }, [sdk, wallet.publicKey]);
   
-  const updateSession = async () => {
+  const refreshSession = async () => {
     if (!sessionToken) {
-      const targetProgramId = GPLCORE_PROGRAMS["devnet"];
-      const topUp = true; // this will transfer 0.01 SOL to the session wallet
+      const targetProgramId = GPLCORE_PROGRAMS[cluster];
+      const topUp = true; 
       const sessionDuration = 60;
       return await createSession(targetProgramId, topUp, sessionDuration);
     }
     return session;
   };
 
-
-  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+  const handlePostCreation = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    const session = await updateSession();
+    const updatedSession = await refreshSession();
 
-    if (!session) {
-      console.log("missing session");
-      return;
-    }
-    if (!session.sessionToken || !session.publicKey || !session.signMessage || !session.sendTransaction || !profile) {
+    if (!updatedSession || !updatedSession.sessionToken || !updatedSession.publicKey || !updatedSession.signMessage || !updatedSession.sendTransaction || !profile) {
       console.log(` profile: ${profile}`);
-      console.log("missing session or profile");
+      console.log("Session or profile details missing");
       return;
     }
 
-    // sign the post with the session wallet
-    const postArray = new TextEncoder().encode(post);
-    const signature = await session.signMessage(postArray);
+    const postArray = new TextEncoder().encode(postContent);
+    const signature = await updatedSession.signMessage(postArray);
     const signatureString = JSON.stringify(signature.toString());
 
-    // create the post metadata
     const metadata = {
       content: {
-        content: post,
+        content: postContent,
         format: "markdown",
       },
       type: "text",
       authorship: {
-        publicKey: session.publicKey.toBase58(),
+        publicKey: updatedSession.publicKey.toBase58(),
         signature: signatureString,
       },
       app_id: "gum-quickstart",
@@ -95,25 +89,24 @@ const CreatePost = () => {
       transactionUrl: '',
     };
 
-    // upload the post to arweave
-    const uploader = await handleUpload(metadata, session);
+    const uploader = await handleUpload(metadata, updatedSession);
     if (!uploader) {
-      console.log("error uploading post");
+      console.log("Error uploading post");
       return;
     }
 
-    // create the post
-    const txRes = await createUsingSession(uploader.url, profile, session.publicKey, new PublicKey(session.sessionToken), session.sendTransaction);
-    if (!txRes) {
-      console.log("error creating post");
+    const postResponse = await createUsingSession(uploader.url, profile, updatedSession.publicKey, new PublicKey(updatedSession.sessionToken), updatedSession.sendTransaction);
+    if (!postResponse) {
+      console.log("Error creating post");
       return;
     }
+
     metadata.metadataUri = uploader.url;
-    metadata.transactionUrl = `https://solana.fm/tx/${txRes}?cluster=devnet-solana`;
+    metadata.transactionUrl = cluster === 'devnet' ? `https://solana.fm/tx/${postResponse}?cluster=devnet-solana` : `https://solana.fm/tx/${postResponse}?cluster=mainnet-solanafmbeta`;
 
-    setPosts((prevState) => [metadata, ...prevState])
+    setPosts((prevState) => [metadata, ...prevState]);
 
-    setPost("");
+    setPostContent("");
   };
 
   return (
@@ -121,21 +114,21 @@ const CreatePost = () => {
     <Header />
     <main className={styles.main}>
       <div className={styles.container}>
-        <form onSubmit={handleSubmit}>
+        <form onSubmit={handlePostCreation}>
           <input
             type="text"
-            value={post}
-            onChange={(e) => setPost(e.target.value)}
+            value={postContent}
+            onChange={(e) => setPostContent(e.target.value)}
             placeholder="What's on your mind?"
           />
-
           <button type="submit">Submit</button>
         </form>
       </div>
-      <Post posts={posts} />
+      <PostDisplay posts={posts} />
     </main>
     </>
   );
 };
 
-export default CreatePost;
+export default PostCreator;
+

@@ -1,4 +1,4 @@
-import { Post } from "@/pages/createPost";
+import { PostData } from "@/pages/createPost";
 import { SDK } from "@gumhq/react-sdk";
 import { PublicKey } from "@solana/web3.js";
 
@@ -11,6 +11,7 @@ export const getProfileAccount = async (sdk: SDK, owner: PublicKey) => {
 }
 
 export const getAllPost = async (sdk: SDK, owner: PublicKey) => {
+  const cluster = (process.env.NEXT_PUBLIC_SOLANA_NETWORK as "devnet" | "mainnet-beta") || 'devnet';
   if (!owner) {
     return;
   }
@@ -30,9 +31,9 @@ export const getAllPost = async (sdk: SDK, owner: PublicKey) => {
     if (txSignature.length === 0) {
       return data;
     }
-    const txUrl = `https://solana.fm/tx/${txSignature[0].signature}?cluster=devnet-solana`
+    const txUrl = cluster === 'devnet' ? `https://solana.fm/tx/${txSignature[0].signature}?cluster=devnet-solana` : `https://solana.fm/tx/${txSignature[0].signature}?cluster=mainnet-solanafmbeta`;
     data.transactionUrl = txUrl;
-    return data as Post;
+    return data as PostData;
   }));
-  return posts as Post[];
+  return posts as PostData[];
 };
