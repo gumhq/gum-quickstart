@@ -1,4 +1,4 @@
-import { useGumContext, useNameService } from '@gumhq/react-sdk';
+import { GUM_TLD_ACCOUNT, useGumContext, useNameService } from '@gumhq/react-sdk';
 import { useWallet } from '@solana/wallet-adapter-react';
 import styles from '@/styles/components/DomainCreationButton.module.css';
 import { useState } from 'react';
@@ -6,12 +6,13 @@ import { useState } from 'react';
 export function DomainCreationButton(): JSX.Element {
   const { sdk } = useGumContext();
   const { publicKey } = useWallet();
-  const { getOrCreateTLD, getOrCreateDomain, isCreating, creationError } = useNameService(sdk);
+  const { getOrCreateDomain, isCreating, creationError } = useNameService(sdk);
   const [userDomain, setUserDomain] = useState('');
 
   const handleDomainCreation = async () => {
     if (publicKey) {
-      const gumTopLevelDomain = await getOrCreateTLD('gum');
+      const gumTopLevelDomain = GUM_TLD_ACCOUNT;
+
       if (!gumTopLevelDomain) {
         throw new Error('Gum TLD not found');
       }
