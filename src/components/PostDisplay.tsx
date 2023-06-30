@@ -1,7 +1,7 @@
 import styles from '@/styles/Home.module.css'
 import Image from 'next/image';
 
-const Post = ({ posts }: any) => {
+const PostDisplay = ({ posts }: any) => {
   return (
     <div className={styles.postList}>
       {posts.map((post: any, index: number) => (
@@ -23,4 +23,4 @@ const Post = ({ posts }: any) => {
   );
 };
 
-export default Post;
+export default PostDisplay;

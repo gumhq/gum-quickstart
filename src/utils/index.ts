@@ -1,28 +1,21 @@
-import { Post } from "@/pages/createPost";
+import { PostData } from "@/pages/createPost";
 import { SDK } from "@gumhq/react-sdk";
 import { PublicKey } from "@solana/web3.js";
 
-export const getUserAccount = async (sdk: SDK, owner: PublicKey) => {
-  const user = await sdk.user.getUser(owner);
-  if (user) {
-    return new PublicKey(user.address);
-  }
-  return null;
-};
-
 export const getProfileAccount = async (sdk: SDK, owner: PublicKey) => {
-  const profile = await sdk.profile.getProfile(owner, "Personal"); // Personal is the default profile name
+  const profile = await sdk.profile.getProfilesByAuthority(owner);
   if (profile) {
-    return new PublicKey(profile.address);
+    return new PublicKey(profile[0].address);
   }
   return null;
 }
 
 export const getAllPost = async (sdk: SDK, owner: PublicKey) => {
+  const cluster = (process.env.NEXT_PUBLIC_SOLANA_NETWORK as "devnet" | "mainnet-beta") || 'devnet';
   if (!owner) {
     return;
   }
-  const allPosts = await sdk.post.getPostsByUser(owner);
+  const allPosts = await sdk.post.getPostsByAuthority(owner);
 
     // Filter posts with metadataUri that starts with "https://arweave.net"
     const filteredPosts = allPosts.filter((element) => element.metadata_uri?.startsWith('https://arweave.net'));
@@ -38,9 +31,9 @@ export const getAllPost = async (sdk: SDK, owner: PublicKey) => {
     if (txSignature.length === 0) {
       return data;
     }
-    const txUrl = `https://solana.fm/tx/${txSignature[0].signature}?cluster=devnet-solana`
+    const txUrl = cluster === 'devnet' ? `https://solana.fm/tx/${txSignature[0].signature}?cluster=devnet-solana` : `https://solana.fm/tx/${txSignature[0].signature}?cluster=mainnet-solanafmbeta`;
     data.transactionUrl = txUrl;
-    return data as Post;
+    return data as PostData;
   }));
-  return posts as Post[];
+  return posts as PostData[];
 };

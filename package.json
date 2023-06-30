@@ -9,7 +9,7 @@
     "lint": "next lint"
   },
   "dependencies": {
-    "@gumhq/react-sdk": "^2.1.0",
+    "@gumhq/react-sdk": "^3.0.1",
     "@gumhq/ui-components": "^2.0.4",
     "@solana/wallet-adapter-base": "^0.9.22",
     "@solana/wallet-adapter-react": "^0.15.30",
@@ -23,7 +23,7 @@
     "eslint": "8.34.0",
     "eslint-config-next": "13.2.1",
     "next": "13.2.1",
-    "react": "18.2.0",
+    "react": "^18.2.0",
     "react-dom": "18.2.0",
     "typescript": "4.9.5"
   }
