@@ -1,6 +1,6 @@
 import { GUM_TLD_ACCOUNT, useGumContext, useNameService } from '@gumhq/react-sdk';
 import { useWallet } from '@solana/wallet-adapter-react';
-import styles from '@/styles/components/DomainCreationButton.module.css';
+import styles from '@/styles/Button.module.css';
 import { useState } from 'react';
 
 export function DomainCreationButton(): JSX.Element {

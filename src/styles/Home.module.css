@@ -82,3 +82,119 @@
   word-wrap: break-word;
   max-width: calc(100% - 24px);
 }
+
+.heading {
+  font-size: 24px;
+  font-weight: bold;
+  margin-bottom: 20px;
+}
+
+.button {
+  background-color: #2ecc71;
+  border: none;
+  border-radius: 4px;
+  color: #fff;
+  cursor: pointer;
+  font-size: 16px;
+  font-weight: bold;
+  padding: 12px 16px;
+  transition: background-color 0.2s ease-in-out;
+}
+
+.button:hover {
+  background-color: #27ae60;
+}
+
+.disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.error {
+  color: #c0392b;
+  border: none;
+  font-size: 14px;
+  margin-top: 8px;
+}
+
+.container form {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  max-width: 600px;
+  margin: 0 auto;
+  padding: 20px;
+}
+
+.container form input,
+.container form button {
+  padding: 10px;
+  font-size: 16px;
+  border-radius: 4px;
+  border: 1px solid #ddd;
+}
+
+.container form input {
+  height: 100px;
+}
+
+.container form button {
+  background-color: #0070f3;
+  color: #fff;
+  border: none;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.container form button:hover {
+  background-color: #0056b3;
+}
+
+.posts {
+  display: grid;
+  gap: 20px;
+  max-width: 600px;
+  margin: 0 auto;
+  padding: 20px;
+}
+
+.post {
+  padding: 20px;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  background-color: #fff;
+  box-shadow: 0px 4px 6px -1px rgba(0, 0, 0, 0.1), 0px 2px 4px -1px rgba(0, 0, 0, 0.06);
+}
+
+.post .reactions {
+  display: flex;
+  gap: 10px;
+}
+
+.post .reaction-btns {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.post .reaction-btns button {
+  cursor: pointer;
+  border: none;
+  background: none;
+  font-size: 20px;
+  color: #333;
+  transition: transform .2s;
+}
+
+.post .reaction-btns button:hover {
+  transform: scale(1.5);
+}
+
+.logos a {
+  margin-left: 5px;
+}
+
+.logos img {
+  width: 20px;
+  height: 20px;
+}

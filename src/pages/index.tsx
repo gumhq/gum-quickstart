@@ -1,7 +1,6 @@
 import styles from '@/styles/Home.module.css'
-import { SocialFeed } from '@/components/SocialFeed'
+import { UserPosts } from '@/components/UserPosts'
 import { MyProfile } from '@/components/MyProfile'
-import { DomainCreationButton } from '@/components/CreateDomainButton'
 import Header from '@/components/Header'
 
 function Home() {
@@ -12,7 +11,9 @@ function Home() {
         <div className={styles.container}>
           <MyProfile />
         </div>
-        <DomainCreationButton />
+        <div className={styles.container}>
+          <UserPosts />
+        </div>
       </main>
       </>
   )
