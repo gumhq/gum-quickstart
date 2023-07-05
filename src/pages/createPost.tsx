@@ -1,4 +1,4 @@
-import { getProfileAccount } from "@/utils";
+import { getPostsWithReaction, getProfileAccount, refreshSession } from "@/utils";
 import { useCreatePost, useGumContext, useSessionWallet, useUploaderContext, GPLCORE_PROGRAMS, useReaction } from "@gumhq/react-sdk";
 import { useWallet } from "@solana/wallet-adapter-react";
 import { PublicKey } from "@solana/web3.js";
@@ -6,6 +6,7 @@ import { use, useEffect, useState } from "react";
 import styles from '@/styles/Home.module.css';
 import PostDisplay from '@/components/PostDisplay';
 import Header from "@/components/Header";
+import { useInitializeProfile } from "@/hooks/useInitializeProfile";
 
 export type PostData = {
   content: {
@@ -33,38 +34,15 @@ const PostCreator = () => {
   const { publicKey: sessionPublicKey, sessionToken, createSession, sendTransaction }  = session;
   const { handleUpload, uploading, error } = useUploaderContext();
   const { createWithSession, postPDA, createPostError } = useCreatePost(sdk);
-  const [profile, setProfile] = useState<PublicKey | undefined>(undefined);
+  const { createReactionWithSession } = useReaction(sdk);
+  const profile = useInitializeProfile();
   const [posts, setPosts] = useState<PostData[]>([]);
 
   console.log(`Error: ${createPostError}`);
-  
-  useEffect(() => {
-    const initializeProfile = async () => {
-      if (wallet.publicKey) {
-        const profileAccount = await getProfileAccount(sdk, wallet.publicKey);
-        if (profileAccount) {
-          setProfile(profileAccount);
-        } else {
-          console.log("Profile account not found, please create profile");
-        }
-      }
-    };
-    initializeProfile();
-  }, [sdk, wallet.publicKey]);
-  
-  const refreshSession = async () => {
-    if (!sessionToken) {
-      const targetProgramId = GPLCORE_PROGRAMS[cluster];
-      const topUp = true; 
-      const sessionDuration = 60;
-      return await createSession(targetProgramId, topUp, sessionDuration);
-    }
-    return session;
-  };
 
-  const handlePostCreation = async (e: React.FormEvent<HTMLFormElement>) => {
+  const createPostHandler = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    const updatedSession = await refreshSession();
+    const updatedSession = await refreshSession(session, cluster);
 
     if (!updatedSession || !updatedSession.sessionToken || !updatedSession.publicKey || !updatedSession.signMessage || !updatedSession.sendTransaction || !profile) {
       console.log(` profile: ${profile}`);
@@ -114,28 +92,24 @@ const PostCreator = () => {
     setPostContent("");
   };
 
+  const createReactionHandler = async (reaction: string, postAddress: string) => {
+    const updatedSession = await refreshSession(session, cluster);
+
+    if (!updatedSession || !profile || !updatedSession.publicKey || !updatedSession.sessionToken || !updatedSession.sendTransaction) return;
+    const reactionData = await createReactionWithSession(reaction, profile, new PublicKey(postAddress), updatedSession.publicKey, new PublicKey(updatedSession.sessionToken), updatedSession.publicKey, updatedSession.sendTransaction);
+    console.log(`Reaction data: ${reactionData}`);
+  };
+
+  const handleReactionCreated = async (reactionType: string, postAddress: string) => {
+    if (!wallet.publicKey) return;
+    await createReactionHandler(reactionType, postAddress);
+    const updatedPostsWithReaction = await getPostsWithReaction(sdk, wallet.publicKey);
+    setPosts(updatedPostsWithReaction);
+  };
+
   useEffect(() => {
-    const getPostsWithReaction = async () => {
-      if (!wallet.publicKey) return;
-      const posts = await sdk.post.getPostsByAuthority(wallet.publicKey);
-      
-      const postsWithReactionPromises = posts.map(async (post) => {
-        const reactionData = await sdk.reaction.getReactionsByPost(new PublicKey(post.address));
-        const reactions = reactionData.map((reaction) => reaction.reaction_type);
-
-        return {
-          ...post,
-          ...post.metadata,
-          reactions: reactions,
-        };
-      });
-
-      const postsWithReaction = await Promise.all(postsWithReactionPromises);
-
-      setPosts(postsWithReaction);
-    };
-
-    getPostsWithReaction();
+    if (!wallet.publicKey) return;
+    getPostsWithReaction(sdk, wallet.publicKey).then((posts) => setPosts(posts));
   }, [sdk, wallet.publicKey]);
 
   return (
@@ -143,7 +117,7 @@ const PostCreator = () => {
       <Header />
       <main className={styles.main}>
         <div className={styles.container}>
-          <form onSubmit={handlePostCreation}>
+          <form onSubmit={createPostHandler}>
             <input
               type="text"
               value={postContent}
@@ -153,7 +127,7 @@ const PostCreator = () => {
             <button type="submit">Submit</button>
           </form>
         </div>
-        <PostDisplay posts={posts} />
+        <PostDisplay posts={posts} onReactionCreated={handleReactionCreated} />
       </main>
     </>
   );

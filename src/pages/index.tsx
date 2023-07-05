@@ -1,5 +1,5 @@
 import styles from '@/styles/Home.module.css'
-import { UserPosts } from '@/components/UserPosts'
+import { UserPostsDisplay } from '@/components/UserPosts'
 import { MyProfile } from '@/components/MyProfile'
 import Header from '@/components/Header'
 
@@ -12,7 +12,7 @@ function Home() {
           <MyProfile />
         </div>
         <div className={styles.container}>
-          <UserPosts />
+          <UserPostsDisplay />
         </div>
       </main>
       </>

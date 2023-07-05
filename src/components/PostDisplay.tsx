@@ -1,69 +1,42 @@
+import { useInitializeProfile } from '@/hooks/useInitializeProfile';
 import { PostData } from '@/pages/createPost';
 import styles from '@/styles/Home.module.css'
-import { getProfileAccount } from '@/utils';
+import { refreshSession } from '@/utils';
 import { useGumContext, useSessionWallet, useReaction, GPLCORE_PROGRAMS } from '@gumhq/react-sdk';
-import { useWallet } from '@solana/wallet-adapter-react';
 import { PublicKey } from '@solana/web3.js';
 import Image from 'next/image';
-import { useEffect, useState } from 'react';
 
-const PostDisplay = ({ posts }: any) => {
-  const { sdk } = useGumContext();
-  const wallet = useWallet();
-  const session = useSessionWallet();
-  const { publicKey: sessionPublicKey, sessionToken, createSession }  = session;
-  const { createReactionWithSession } = useReaction(sdk);
-  const [profile, setProfile] = useState<PublicKey | undefined>(undefined);
-  const cluster = (process.env.NEXT_PUBLIC_SOLANA_NETWORK as "devnet" | "mainnet-beta") || 'devnet';
+const PostDisplay = ({ posts, onReactionCreated }: { posts: PostData[], onReactionCreated: (reactionType: string, postAddress: string) => void }) => {
+  // const { sdk } = useGumContext();
+  // const session = useSessionWallet();
+  // const { createReactionWithSession } = useReaction(sdk);
+  // const profile = useInitializeProfile();
+  // const cluster = (process.env.NEXT_PUBLIC_SOLANA_NETWORK as "devnet" | "mainnet-beta") || 'devnet';
 
-  useEffect(() => {
-    const initializeProfile = async () => {
-      if (wallet.publicKey) {
-        const profileAccount = await getProfileAccount(sdk, wallet.publicKey);
-        if (profileAccount) {
-          setProfile(profileAccount);
-        } else {
-          console.log("Profile account not found, please create profile");
-        }
-      }
-    };
-    initializeProfile();
-  }, [sdk, wallet.publicKey]);
+  // const createReactionHandler = async (post: PostData, reaction: string) => {
+  //   const updatedSession = await refreshSession(session, cluster);
 
-  const refreshSession = async () => {
-    if (!sessionToken) {
-      const targetProgramId = GPLCORE_PROGRAMS[cluster];
-      const topUp = true; 
-      const sessionDuration = 60;
-      return await createSession(targetProgramId, topUp, sessionDuration);
-    }
-    return session;
-  };
-
-  const createReaction = async (post: PostData, reaction: string) => {
-    const updatedSession = await refreshSession();
-
-    if (!updatedSession || !profile || !updatedSession.publicKey || !updatedSession.sessionToken || !updatedSession.sendTransaction) return;
-    const reactionData = await createReactionWithSession(reaction, profile, new PublicKey(post.address), updatedSession.publicKey, new PublicKey(updatedSession.sessionToken), updatedSession.publicKey, updatedSession.sendTransaction);
-    console.log(`Reaction data: ${reactionData}`);
-  };
+  //   if (!updatedSession || !profile || !updatedSession.publicKey || !updatedSession.sessionToken || !updatedSession.sendTransaction) return;
+  //   const reactionData = await createReactionWithSession(reaction, profile, new PublicKey(post.address), updatedSession.publicKey, new PublicKey(updatedSession.sessionToken), updatedSession.publicKey, updatedSession.sendTransaction);
+  //   console.log(`Reaction data: ${reactionData}`);
+  // };
 
   return (
     <div className={styles.posts}>
-      {posts.map((post: any, index: string) => (
+      {posts.map((post: any, index: number) => (
         <div className={styles.post} key={index}>
           <div className={styles.postContent}>
             <div className={styles.postText}>{post.content.content}</div>
             <div className={styles.reactionBtns}>
-              {post.reactions && post.reactions.map((reaction: string, index: string) => (
+              {post.reactions && post.reactions.map((reaction: string, index: number) => (
                 <span key={index}>{reaction}</span>
               ))}
             </div>
             <div className={styles.reactionBtns}>
-              <button onClick={() => createReaction(post,"😄")}>😄</button>
-              <button onClick={() => createReaction(post,"❤️")}>❤️</button>
-              <button onClick={() => createReaction(post,"😂")}>😂</button>
-              <button onClick={() => createReaction(post,"👍")}>👍</button>
+              <button onClick={() => onReactionCreated("❤️", post.address)}>❤️</button>
+              <button onClick={() => onReactionCreated("😄", post.address)}>😄</button>
+              <button onClick={() => onReactionCreated("😂", post.address)}>😂</button>
+              <button onClick={() => onReactionCreated("👍", post.address)}>👍</button>
             </div>
           </div>
           <div className={styles.logos}>

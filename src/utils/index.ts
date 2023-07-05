@@ -1,6 +1,18 @@
 import { PostData } from "@/pages/createPost";
-import { SDK } from "@gumhq/react-sdk";
+import { SDK, GPLCORE_PROGRAMS } from "@gumhq/react-sdk";
 import { PublicKey } from "@solana/web3.js";
+
+
+export const refreshSession = async (session: any, cluster: "devnet" | "mainnet-beta") => {
+  const { sessionToken, createSession }  = session;
+  if (!sessionToken) {
+    const targetProgramId = GPLCORE_PROGRAMS[cluster];
+    const topUp = true; 
+    const sessionDuration = 60;
+    return await createSession(targetProgramId, topUp, sessionDuration);
+  }
+  return session;
+};
 
 export const getProfileAccount = async (sdk: SDK, owner: PublicKey) => {
   const profile = await sdk.profile.getProfilesByAuthority(owner);
@@ -9,6 +21,24 @@ export const getProfileAccount = async (sdk: SDK, owner: PublicKey) => {
   }
   return null;
 }
+
+export const getPostsWithReaction = async (sdk: any, authority: PublicKey) => {
+  const posts = await sdk.post.getPostsByAuthority(authority);
+  
+  const postsWithReactionPromises = posts.map(async (post: any) => {
+    const reactionData = await sdk.reaction.getReactionsByPost(new PublicKey(post.address));
+    const reactions = reactionData.map((reaction: any) => reaction.reaction_type);
+
+    return {
+      ...post,
+      ...post.metadata,
+      reactions: reactions,
+    };
+  });
+
+  const postsWithReaction = await Promise.all(postsWithReactionPromises);
+  return postsWithReaction;
+};
 
 export const getAllPost = async (sdk: SDK, owner: PublicKey) => {
   const cluster = (process.env.NEXT_PUBLIC_SOLANA_NETWORK as "devnet" | "mainnet-beta") || 'devnet';

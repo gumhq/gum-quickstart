@@ -5,7 +5,7 @@ import { Feed, PostMetadata, ProfileMetadata } from '@gumhq/ui-components';
 import React, { useEffect, useState } from 'react';
 import { useWallet } from '@solana/wallet-adapter-react';
 
-export function UserPosts() {
+export function UserPostsDisplay() {
   const wallet = useWallet();
   const { sdk } = useGumContext();
   const [userPosts, setUserPosts] = useState<any[]>([]);
